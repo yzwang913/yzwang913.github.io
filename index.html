@@ -3,37 +3,196 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Materials Search</title>
-    <link rel="stylesheet" href="/static/styles.css">
+    <title>MR HT Lattice Viewer</title>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap');
+
+      :root{
+        --bg: #f5f7fb;
+        --panel: #ffffff;
+        --fg: #0f172a;
+        --muted: #6b7280;
+        --accent: #2563eb;
+        --accent-2: #10b981;
+        --page-width: min(1200px, 92vw);
+      }
+      *{ box-sizing: border-box; }
+      body{
+        margin:0;
+        padding:0;
+        background:
+          radial-gradient(circle at 20% 20%, rgba(37,99,235,0.08), transparent 25%),
+          radial-gradient(circle at 80% 0%, rgba(16,185,129,0.10), transparent 32%),
+          linear-gradient(180deg, #f8fafc 0%, #eef2ff 40%, #eaf7f3 100%);
+        color:var(--fg);
+        font-family: 'Space Grotesk', 'Segoe UI', system-ui, -apple-system, sans-serif;
+      }
+      main.landing{
+        min-height: 100vh;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        padding:48px 0;
+      }
+      .hero{
+        width: var(--page-width);
+        text-align:center;
+        padding:32px 40px;
+        background:rgba(255,255,255,0.9);
+        border:1px solid #e5e7eb;
+        border-radius:22px;
+        box-shadow:0 26px 80px rgba(15,23,42,0.18);
+      }
+      .brand{ font-weight:700; color:var(--accent); letter-spacing:0.4px; font-size:26px; }
+      .subtitle{ color:var(--muted); margin-top:10px; font-size:16px; }
+      .actions{
+        margin-top:16px;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        gap:10px;
+        flex-wrap:wrap;
+      }
+      .btn{
+        padding:10px 14px;
+        border-radius:10px;
+        border:1px solid #2563eb;
+        background:linear-gradient(135deg, #2563eb 0%, #3b82f6 70%);
+        color:#f8fafc;
+        cursor:pointer;
+        text-decoration:none;
+        font-weight:600;
+        box-shadow:0 10px 24px rgba(59,130,246,0.3);
+        transition: transform 120ms ease, box-shadow 120ms ease;
+      }
+      .btn:hover{ transform: translateY(-1px); box-shadow:0 12px 28px rgba(59,130,246,0.35); }
+      .btn.ghost{
+        background:#ffffff;
+        color:var(--fg);
+        border:1px solid #dce2f2;
+        box-shadow:0 8px 20px rgba(15,23,42,0.08);
+      }
+      .status{
+        margin-top:12px;
+        font-size:13px;
+        color:var(--muted);
+      }
+      .note{
+        margin-top:6px;
+        font-size:12px;
+        color:var(--muted);
+      }
+      .frame-wrap{
+        margin-top:18px;
+        border:1px solid #e5e7eb;
+        border-radius:18px;
+        background:#ffffff;
+        overflow:hidden;
+        box-shadow:0 18px 48px rgba(15,23,42,0.12);
+        display:none;
+      }
+      .frame-wrap.show{ display:block; }
+      .frame-wrap iframe{
+        width:100%;
+        height:72vh;
+        border:0;
+        background:#ffffff;
+      }
+      @media (max-width: 900px){
+        .hero{ padding:24px 18px; }
+        .frame-wrap iframe{ height:70vh; }
+      }
+    </style>
   </head>
   <body>
     <main class="landing">
-      <div class="hero hero-pt">
+      <div class="hero">
         <div class="brand">MR HT Lattice Viewer</div>
-        <div class="subtitle">Search by chemistry: formula, only elements, or at-least elements</div>
-        <div class="search-modes" role="tablist">
-          <button type="button" class="mode-btn active" data-mode="at_least_elements">At Least Elements</button>
-          <button type="button" class="mode-btn" data-mode="only_elements">Only Elements</button>
-          <button type="button" class="mode-btn" data-mode="formula">Formula</button>
-        </div>
-        <div class="search-bar large">
-          <input id="searchInput" type="text" placeholder="Search formula (press Enter)" autofocus />
-          <button id="searchBtn">Search</button>
+        <div class="subtitle">Live preview for the MR HT web app (served via tunnel).</div>
+
+        <div class="actions">
+          <a
+            id="openApp"
+            class="btn"
+            data-project="nano"
+            data-url="https://example.trycloudflare.com/"
+            href="#"
+            target="_blank"
+            rel="noopener"
+          >Open Live App</a>
+          <button id="togglePreview" class="btn ghost" type="button">Preview Here</button>
         </div>
 
-        <section class="pt-shell">
-          <div class="pt-header">Build formula from elements</div>
-          <div class="pt-subtitle">Click elements to compose a formula; press Search to find matching materials.</div>
-          <div class="pt-grid-wrap">
-            <div id="ptGrid" class="pt-grid"></div>
-          </div>
-          <div id="ptSelected" class="pt-selected">Selected elements: –</div>
-        </section>
+        <div id="status" class="status">Tunnel not set yet. Run tunnel_keeper.py to update.</div>
+        <div class="note">If the preview is blank, open in a new tab or refresh after tunnel update.</div>
 
-        <div id="resultsShell" class="results-shell"></div>
+        <div id="frameWrap" class="frame-wrap">
+          <iframe
+            id="appFrame"
+            title="MR HT Lattice Viewer"
+            loading="lazy"
+            data-project="nano"
+            data-src="https://example.trycloudflare.com/"
+          ></iframe>
+        </div>
       </div>
     </main>
 
-    <script src="/static/landing.js"></script>
+    <script>
+      (function(){
+        const link = document.getElementById('openApp');
+        const toggle = document.getElementById('togglePreview');
+        const wrap = document.getElementById('frameWrap');
+        const frame = document.getElementById('appFrame');
+        const status = document.getElementById('status');
+
+        function pickUrl(){
+          if (link && link.dataset.url) return link.dataset.url;
+          if (frame && frame.dataset.src) return frame.dataset.src;
+          return '';
+        }
+
+        function normalize(url){
+          if (!url) return '';
+          return url.endsWith('/') ? url : url + '/';
+        }
+
+        function syncTargets(){
+          const raw = pickUrl();
+          if (!raw){
+            if (status) status.textContent = 'Tunnel not set yet. Run tunnel_keeper.py to update.';
+            return '';
+          }
+          const url = normalize(raw);
+          if (link) link.href = url;
+          if (status) status.textContent = 'Live tunnel: ' + url;
+          return url;
+        }
+
+        const initial = syncTargets();
+        if (initial && frame && !frame.src){
+          frame.src = initial;
+          if (wrap) wrap.classList.add('show');
+          if (toggle) toggle.textContent = 'Hide Preview';
+        }
+
+        if (toggle){
+          toggle.addEventListener('click', function(){
+            const url = syncTargets();
+            if (!url || !wrap || !frame) return;
+            if (!frame.src) frame.src = url;
+            const open = wrap.classList.toggle('show');
+            toggle.textContent = open ? 'Hide Preview' : 'Preview Here';
+          });
+        }
+
+        if (link){
+          link.addEventListener('click', function(e){
+            const url = syncTargets();
+            if (!url) e.preventDefault();
+          });
+        }
+      })();
+    </script>
   </body>
-  </html>
+</html>
