@@ -7,33 +7,37 @@
   <meta name="description" content="Yan Zhang (IOPCAS) — moiré/twisted vdW materials, continuum models, TAPW, topological analysis." />
   <meta name="color-scheme" content="light dark" />
   <style>
+  @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap');
+
   :root{
-    /* Dark (default) */
-    --bg:#0b1020; --bg-soft:#0f172a; --text:#e6eaf2; --muted:#b9c3d6;
-    --card: #0b1220cc; --ring:#223047; --brand:#7dd3fc; --brand-2:#60a5fa; --accent:#a78bfa;
+    --bg:#f6f4ef; --bg-soft:#ffffff; --text:#0f172a; --muted:#4b5563;
+    --card: rgba(255,255,255,0.86); --ring:rgba(15,23,42,0.08);
+    --brand:#0ea5a6; --brand-2:#0284c7; --accent:#f59e0b;
   }
-  [data-theme="light"]{
-    --bg:#f8fafc; --bg-soft:#ffffff; --text:#0f172a; --muted:#475569;
-    --card:#ffffffcc; --ring:#e2e8f0; --brand:#0ea5e9; --brand-2:#6366f1; --accent:#7c3aed;
+  [data-theme="dark"]{
+    --bg:#0b1220; --bg-soft:#0f172a; --text:#e2e8f0; --muted:#94a3b8;
+    --card: rgba(15,23,42,0.92); --ring:rgba(148,163,184,0.16);
+    --brand:#22d3ee; --brand-2:#38bdf8; --accent:#fbbf24;
   }
   *{box-sizing:border-box}
   html{scroll-behavior:smooth}
   body{
-    margin:0; font:16px/1.6 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Noto Sans, "Helvetica Neue", Arial, "Apple Color Emoji", "Segoe UI Emoji";
+    margin:0;
+    font:16px/1.6 'Space Grotesk', 'Noto Sans SC', 'Microsoft YaHei', sans-serif;
     color:var(--text);
     background:
-      radial-gradient(1200px 800px at 20% -10%, #1f2937 0%, transparent 60%),
-      radial-gradient(1000px 700px at 120% -20%, #0ea5e9 0%, transparent 45%),
-      var(--bg);
+      radial-gradient(900px 500px at 15% -10%, rgba(14,165,166,0.18), transparent 60%),
+      radial-gradient(600px 500px at 85% -10%, rgba(245,158,11,0.18), transparent 55%),
+      linear-gradient(180deg, #fdfcf9 0%, var(--bg) 60%, #eef2f7 100%);
     transition: background-color .25s, color .25s;
   }
-  [data-theme="light"] body{
+  [data-theme="dark"] body{
     background:
-      radial-gradient(1000px 700px at -10% -20%, #e0f2fe 0%, transparent 55%),
-      radial-gradient(900px 600px at 120% -30%, #ede9fe 0%, transparent 45%),
-      var(--bg);
+      radial-gradient(900px 500px at 15% -10%, rgba(34,211,238,0.14), transparent 60%),
+      radial-gradient(600px 500px at 85% -10%, rgba(251,191,36,0.12), transparent 55%),
+      linear-gradient(180deg, #0b1220 0%, #0a101e 60%, #0b1220 100%);
   }
-  .wrap{max-width:1100px; margin:0 auto; padding:32px 16px}
+  .wrap{max-width:1080px; margin:0 auto; padding:48px 16px 72px}
   header.hero{
     padding:72px 0 56px; position:relative; overflow:hidden;
     border-bottom:1px solid var(--ring);
@@ -58,27 +62,188 @@
   @media (min-width:768px){ .grid.cols-2{grid-template-columns:1fr 1fr} }
 
   section{padding:44px 0; border-bottom:1px solid var(--ring)}
-  h2{font-size:clamp(22px,3.5vw,28px); margin:0 0 12px}
+  h2{
+    font-size:clamp(26px,3.6vw,34px);
+    margin:0 0 10px;
+    letter-spacing:.2px;
+    font-weight:700;
+  }
   p{margin:6px 0}
 
   .card{
-    background: linear-gradient(var(--card), var(--card)) padding-box,
-               linear-gradient(180deg, color-mix(in oklab, var(--brand) 15%, transparent), transparent) border-box;
-    border:1px solid transparent; border-radius:20px; padding:18px;
-    box-shadow:0 10px 28px rgba(2,6,23,.35);
+    background: linear-gradient(180deg, rgba(255,255,255,0.96), rgba(255,255,255,0.86));
+    border:1px solid rgba(15,23,42,0.08);
+    border-radius:24px;
+    padding:26px 22px 20px;
+    box-shadow:0 18px 45px rgba(15,23,42,0.12);
+    position:relative;
+    overflow:hidden;
     transition:transform .2s ease, box-shadow .2s ease, background .2s ease;
   }
-  .card:hover{transform:translateY(-2px); box-shadow:0 18px 36px rgba(2,6,23,.45)}
-  .card h3{margin:0 0 8px; font-size:18px}
+  .card::before{
+    content:'';
+    position:absolute;
+    left:22px;
+    top:18px;
+    width:48px;
+    height:6px;
+    border-radius:999px;
+    background:linear-gradient(90deg, var(--brand), var(--brand-2));
+    opacity:0.85;
+  }
+  .card:hover{transform:translateY(-2px); box-shadow:0 26px 60px rgba(15,23,42,0.16)}
   .card p{color:var(--muted)}
 
-  .btn{display:inline-block; padding:10px 14px; border-radius:12px; text-decoration:none; color:#06121f; background:linear-gradient(90deg, var(--brand), var(--brand-2)); font-weight:700}
-  .btn.ghost{background:transparent; color:var(--text); border:1px solid var(--ring)}
-  .pill{color:#06121f; background:#a7f3d0; padding:4px 8px; border-radius:999px; font-size:12px; font-weight:700}
+  .btn{
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    padding:12px 18px;
+    border-radius:14px;
+    text-decoration:none;
+    color:#06121f;
+    background:linear-gradient(135deg, var(--brand), var(--brand-2));
+    font-weight:600;
+    letter-spacing:.2px;
+    border:1px solid transparent;
+    box-shadow:0 14px 30px rgba(2,132,199,0.22);
+    transition:transform .15s ease, box-shadow .15s ease, filter .15s ease;
+  }
+  .btn:hover{transform:translateY(-1px); box-shadow:0 18px 36px rgba(2,132,199,0.28); filter:saturate(1.05)}
+  .btn.ghost{
+    background:rgba(255,255,255,0.7);
+    color:var(--text);
+    border:1px solid rgba(15,23,42,0.1);
+    box-shadow:0 10px 20px rgba(15,23,42,0.08);
+  }
+  .pill{
+    color:#0f172a;
+    background:linear-gradient(135deg, #fef3c7, #fde68a);
+    border:1px solid rgba(245,158,11,0.3);
+    padding:4px 10px;
+    border-radius:999px;
+    font-size:12px;
+    font-weight:700;
+  }
   footer{padding:36px 0; color:var(--muted)}
   .muted{color:var(--muted)}
   .mono{font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;}
   a{color:var(--brand-2)}
+  .section-lead{
+    margin-top:10px;
+    padding:10px 12px;
+    border-radius:12px;
+    background:rgba(14,165,166,0.08);
+    border:1px solid rgba(14,165,166,0.18);
+    font-size:14px;
+  }
+  .stack{display:flex; flex-direction:column; gap:18px; margin-top:18px}
+  .card-title{
+    margin:16px 0 8px;
+    font-size:22px;
+    font-weight:700;
+    display:flex;
+    align-items:center;
+    gap:10px;
+  }
+  .card-actions{
+    margin:14px 0 12px;
+    display:flex;
+    gap:12px;
+    flex-wrap:wrap;
+  }
+  .card-note{font-size:13px}
+  .embed{
+    margin-top:16px;
+    border-radius:16px;
+    border:1px solid rgba(15,23,42,0.12);
+    background:var(--bg-soft);
+    overflow:hidden;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,0.6);
+  }
+  .embed iframe{
+    width:100%;
+    height:60vh;
+    min-height:420px;
+    border:0;
+    background:#0b1220;
+  }
+  #demos{
+    position:relative;
+    padding:48px 36px;
+    border-radius:28px;
+    border:1px solid var(--ring);
+    border-bottom:none;
+    background:
+      radial-gradient(420px 240px at 12% 0%, rgba(14,165,166,0.16), transparent 60%),
+      radial-gradient(420px 240px at 95% 10%, rgba(245,158,11,0.18), transparent 60%),
+      var(--card);
+    box-shadow:0 30px 70px rgba(15,23,42,0.12);
+    overflow:hidden;
+  }
+  #demos::before,
+  #demos::after{
+    content:'';
+    position:absolute;
+    border-radius:50%;
+    pointer-events:none;
+  }
+  #demos::before{
+    top:-40px;
+    left:-60px;
+    width:180px;
+    height:180px;
+    background:radial-gradient(circle at 30% 30%, rgba(14,165,166,0.25), transparent 70%);
+  }
+  #demos::after{
+    bottom:-70px;
+    right:-60px;
+    width:240px;
+    height:240px;
+    background:radial-gradient(circle at 30% 30%, rgba(2,132,199,0.25), transparent 70%);
+  }
+  @keyframes liftIn{
+    from{opacity:0; transform:translateY(10px)}
+    to{opacity:1; transform:translateY(0)}
+  }
+  #demos{animation: liftIn 520ms ease}
+  #demos .card{animation: liftIn 640ms ease 80ms both}
+  @media (max-width: 900px){
+    .wrap{padding:36px 12px 60px}
+    #demos{padding:32px 18px}
+    .card{padding:24px 18px 18px}
+    .embed iframe{height:52vh; min-height:320px}
+  }
+  @media (prefers-reduced-motion: reduce){
+    *{animation:none !important; transition:none !important}
+  }
+  [data-theme="dark"] .card{
+    background:linear-gradient(180deg, rgba(15,23,42,0.96), rgba(15,23,42,0.88));
+    border-color:rgba(148,163,184,0.2);
+    box-shadow:0 24px 60px rgba(2,6,23,0.45);
+  }
+  [data-theme="dark"] .btn.ghost{
+    background:rgba(15,23,42,0.6);
+    border-color:rgba(148,163,184,0.22);
+  }
+  [data-theme="dark"] .section-lead{
+    background:rgba(34,211,238,0.08);
+    border-color:rgba(148,163,184,0.22);
+  }
+  [data-theme="dark"] #demos{
+    border-color:rgba(148,163,184,0.2);
+    background:
+      radial-gradient(420px 240px at 12% 0%, rgba(34,211,238,0.12), transparent 60%),
+      radial-gradient(420px 240px at 95% 10%, rgba(251,191,36,0.12), transparent 60%),
+      rgba(15,23,42,0.9);
+    box-shadow:0 34px 80px rgba(2,6,23,0.45);
+  }
+  [data-theme="dark"] #demos::before{
+    background:radial-gradient(circle at 30% 30%, rgba(34,211,238,0.3), transparent 70%);
+  }
+  [data-theme="dark"] #demos::after{
+    background:radial-gradient(circle at 30% 30%, rgba(56,189,248,0.28), transparent 70%);
+  }
   /* Hide non-project sections on landing */
   header.hero,
   #about,
@@ -128,19 +293,21 @@
   <main class="wrap">
     <section id="about">
       <h2>关于我</h2>
-      <p>专注于扭转/摩尔范德华材料与拓扑分析。此页仅作名片与入口。</p>    </section><section id="demos">
+      <p>专注于扭转/摩尔范德华材料与拓扑分析。此页仅作名片与入口。</p>
+    </section>
+    <section id="demos" class="demos-section">
       <h2>项目体验</h2>
-      <p class="muted" style="margin-top:-6px">提示：点击下方「打开项目」后会跳转到临时通道链接；该链接<strong>可能变更</strong>。若无法打开，请刷新本页或稍后再试。</p>
-      <div class="stack" style="display:flex; flex-direction:column; gap:16px; margin-top:16px">
+      <p class="muted section-lead">提示：点击下方「打开项目」后会跳转到临时通道链接；该链接<strong>可能变更</strong>。若无法打开，请刷新本页或稍后再试。</p>
+      <div class="stack">
         <article class="card">
-          <h3 style="display:flex;align-items:center;gap:8px">MR HT Lattice Viewer <span class="pill">材料</span></h3>
-          <p style="margin:10px 0 14px;display:flex;gap:10px;flex-wrap:wrap">
+          <h3 class="card-title">MR HT Lattice Viewer <span class="pill">材料</span></h3>
+          <p class="card-actions">
             <a class="btn gate-link" href="#" data-project="nano" data-url="https://signing-apartments-distance-tender.trycloudflare.com/">🔗 打开项目</a>
             <button class="btn ghost gate-preview" data-project="nano" data-target="#frame-nano" data-src="https://signing-apartments-distance-tender.trycloudflare.com/" type="button">在页面内预览</button>
           </p>
-          <p class="muted" style="margin:6px 0 0">打开项目后跳转的链接为临时通道，可能会更新。</p>
+          <p class="muted card-note">打开项目后跳转的链接为临时通道，可能会更新。</p>
           <div id="frame-nano" class="embed" style="display:none">
-            <iframe title="MR HT Lattice Viewer" style="width:100%;height:60vh;border:1px solid #1f2937;border-radius:12px;background:#0b1220" loading="lazy" referrerpolicy="no-referrer"></iframe>
+            <iframe title="MR HT Lattice Viewer" loading="lazy" referrerpolicy="no-referrer"></iframe>
           </div>
         </article>
       </div>
