@@ -126,28 +126,15 @@
       <p class="muted" style="margin-top:-6px">提示：点击下方「打开项目」后会跳转到临时通道链接；该链接<strong>可能变更</strong>。若无法打开，请刷新本页或稍后再试。</p>
       <div class="stack" style="display:flex; flex-direction:column; gap:16px; margin-top:16px">
         <article class="card">
-          <h3 style="display:flex;align-items:center;gap:8px">Nano 服务器监控 <span class="pill">监控</span></h3>
-          <p class="muted">轻量监控面板：状态/资源/告警。</p>
+          <h3 style="display:flex;align-items:center;gap:8px">MR HT Lattice Viewer <span class="pill">材料</span></h3>
+          <p class="muted">材料搜索与晶格可视化。</p>
           <p style="margin:10px 0 14px;display:flex;gap:10px;flex-wrap:wrap">
             <a class="btn gate-link" href="#" data-project="nano" data-url="https://signing-apartments-distance-tender.trycloudflare.com/">🔗 打开项目</a>
             <button class="btn ghost gate-preview" data-project="nano" data-target="#frame-nano" data-src="https://signing-apartments-distance-tender.trycloudflare.com/" type="button">在页面内预览</button>
           </p>
           <p class="muted" style="margin:6px 0 0">打开项目后跳转的链接为临时通道，可能会更新。</p>
           <div id="frame-nano" class="embed" style="display:none">
-            <iframe title="Nano Monitor" style="width:100%;height:60vh;border:1px solid #1f2937;border-radius:12px;background:#0b1220" loading="lazy" referrerpolicy="no-referrer"></iframe>
-          </div>
-        </article>
-
-        <article class="card">
-          <h3 style="display:flex;align-items:center;gap:8px">Moiré Band Viewer <span class="pill">实时</span></h3>
-          <p class="muted">Moiré能带与拓扑可视化。</p>
-          <p style="margin:10px 0 14px;display:flex;gap:10px;flex-wrap:wrap">
-            <a class="btn gate-link" href="#" data-project="band" data-url="https://answering-camel-mineral-pix.trycloudflare.com/">🔗 打开项目</a>
-            <button class="btn ghost gate-preview" data-project="band" data-target="#frame-band" data-src="https://answering-camel-mineral-pix.trycloudflare.com/" type="button">在页面内预览</button>
-          </p>
-          <p class="muted" style="margin:6px 0 0">打开项目后跳转的链接为临时通道，可能会更新。</p>
-          <div id="frame-band" class="embed" style="display:none">
-            <iframe title="Band Viewer" style="width:100%;height:60vh;border:1px solid #1f2937;border-radius:12px;background:#0b1220" loading="lazy" referrerpolicy="no-referrer"></iframe>
+            <iframe title="MR HT Lattice Viewer" style="width:100%;height:60vh;border:1px solid #1f2937;border-radius:12px;background:#0b1220" loading="lazy" referrerpolicy="no-referrer"></iframe>
           </div>
         </article>
       </div>
@@ -193,8 +180,7 @@
 
   // 存储哈希（SHA-256 hex），避免明文出现在源码中（注意：仅防君子，不等同安全）
   const PASS = {
-    band: 'e00a03f9476a7bf2c6f8e9fe741d549323a133e85afdfee1823e9ca3e3a64a6c',
-    nano: '0a5c81430ef4b9a449c4b94b8df61699fe2c725a7ef662862c6030c7e10083fc'  
+    nano: '0a5c81430ef4b9a449c4b94b8df61699fe2c725a7ef662862c6030c7e10083fc'
   };
 
   async function sha256Hex(text){
@@ -259,13 +245,7 @@
 
 // ---------- URL 参数覆盖 Quick Tunnel 地址 ----------
 const u = new URLSearchParams(location.search);
-const band = u.get('band');
 const nano = u.get('nano');
-if(band){
-  const a = document.querySelector('a.gate-link[data-project="band"]');
-  const b = document.querySelector('button.gate-preview[data-project="band"]');
-  if(a) a.dataset.url = band; if(b) b.dataset.src = band;
-}
 if(nano){
   const a = document.querySelector('a.gate-link[data-project="nano"]');
   const b = document.querySelector('button.gate-preview[data-project="nano"]');
