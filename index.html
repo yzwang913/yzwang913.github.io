@@ -79,6 +79,13 @@
   .muted{color:var(--muted)}
   .mono{font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;}
   a{color:var(--brand-2)}
+  /* Hide non-project sections on landing */
+  header.hero,
+  #about,
+  #contact,
+  footer{
+    display:none;
+  }
   /* 密码弹窗样式 */
   .pw-modal{position:fixed; inset:0; background:rgba(2,6,23,.55); backdrop-filter:blur(2px); display:grid; place-items:center; z-index:9999}
   .pw-modal[hidden]{display:none}
