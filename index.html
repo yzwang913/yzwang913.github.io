@@ -1,198 +1,276 @@
 <!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>MR HT Lattice Viewer</title>
-    <style>
-      @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap');
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Yan Zhang — Moiré & vdW Materials</title>
+  <meta name="description" content="Yan Zhang (IOPCAS) — moiré/twisted vdW materials, continuum models, TAPW, topological analysis." />
+  <meta name="color-scheme" content="light dark" />
+  <style>
+  :root{
+    /* Dark (default) */
+    --bg:#0b1020; --bg-soft:#0f172a; --text:#e6eaf2; --muted:#b9c3d6;
+    --card: #0b1220cc; --ring:#223047; --brand:#7dd3fc; --brand-2:#60a5fa; --accent:#a78bfa;
+  }
+  [data-theme="light"]{
+    --bg:#f8fafc; --bg-soft:#ffffff; --text:#0f172a; --muted:#475569;
+    --card:#ffffffcc; --ring:#e2e8f0; --brand:#0ea5e9; --brand-2:#6366f1; --accent:#7c3aed;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0; font:16px/1.6 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Noto Sans, "Helvetica Neue", Arial, "Apple Color Emoji", "Segoe UI Emoji";
+    color:var(--text);
+    background:
+      radial-gradient(1200px 800px at 20% -10%, #1f2937 0%, transparent 60%),
+      radial-gradient(1000px 700px at 120% -20%, #0ea5e9 0%, transparent 45%),
+      var(--bg);
+    transition: background-color .25s, color .25s;
+  }
+  [data-theme="light"] body{
+    background:
+      radial-gradient(1000px 700px at -10% -20%, #e0f2fe 0%, transparent 55%),
+      radial-gradient(900px 600px at 120% -30%, #ede9fe 0%, transparent 45%),
+      var(--bg);
+  }
+  .wrap{max-width:1100px; margin:0 auto; padding:32px 16px}
+  header.hero{
+    padding:72px 0 56px; position:relative; overflow:hidden;
+    border-bottom:1px solid var(--ring);
+    background: linear-gradient(135deg, color-mix(in oklab, var(--brand) 15%, transparent) 0%, color-mix(in oklab, var(--accent) 12%, transparent) 100%);
+  }
+  .brand{font-weight:800; font-size:clamp(28px,5vw,40px); letter-spacing:.3px}
+  .tagline{color:var(--muted); font-size:clamp(14px,2.6vw,18px)}
+  nav{display:flex; gap:12px; flex-wrap:wrap; margin-top:18px; align-items:center}
+  nav a{color:var(--text); text-decoration:none; padding:8px 12px; border:1px solid var(--ring); border-radius:999px; backdrop-filter:saturate(120%);}
+  nav a:hover{border-color:color-mix(in oklab, var(--ring) 50%, var(--brand)); background:color-mix(in oklab, var(--bg-soft) 80%, var(--brand) 20%)}
 
-      :root{
-        --bg: #f5f7fb;
-        --panel: #ffffff;
-        --fg: #0f172a;
-        --muted: #6b7280;
-        --accent: #2563eb;
-        --accent-2: #10b981;
-        --page-width: min(1200px, 92vw);
-      }
-      *{ box-sizing: border-box; }
-      body{
-        margin:0;
-        padding:0;
-        background:
-          radial-gradient(circle at 20% 20%, rgba(37,99,235,0.08), transparent 25%),
-          radial-gradient(circle at 80% 0%, rgba(16,185,129,0.10), transparent 32%),
-          linear-gradient(180deg, #f8fafc 0%, #eef2ff 40%, #eaf7f3 100%);
-        color:var(--fg);
-        font-family: 'Space Grotesk', 'Segoe UI', system-ui, -apple-system, sans-serif;
-      }
-      main.landing{
-        min-height: 100vh;
-        display:flex;
-        align-items:center;
-        justify-content:center;
-        padding:48px 0;
-      }
-      .hero{
-        width: var(--page-width);
-        text-align:center;
-        padding:32px 40px;
-        background:rgba(255,255,255,0.9);
-        border:1px solid #e5e7eb;
-        border-radius:22px;
-        box-shadow:0 26px 80px rgba(15,23,42,0.18);
-      }
-      .brand{ font-weight:700; color:var(--accent); letter-spacing:0.4px; font-size:26px; }
-      .subtitle{ color:var(--muted); margin-top:10px; font-size:16px; }
-      .actions{
-        margin-top:16px;
-        display:flex;
-        align-items:center;
-        justify-content:center;
-        gap:10px;
-        flex-wrap:wrap;
-      }
-      .btn{
-        padding:10px 14px;
-        border-radius:10px;
-        border:1px solid #2563eb;
-        background:linear-gradient(135deg, #2563eb 0%, #3b82f6 70%);
-        color:#f8fafc;
-        cursor:pointer;
-        text-decoration:none;
-        font-weight:600;
-        box-shadow:0 10px 24px rgba(59,130,246,0.3);
-        transition: transform 120ms ease, box-shadow 120ms ease;
-      }
-      .btn:hover{ transform: translateY(-1px); box-shadow:0 12px 28px rgba(59,130,246,0.35); }
-      .btn.ghost{
-        background:#ffffff;
-        color:var(--fg);
-        border:1px solid #dce2f2;
-        box-shadow:0 8px 20px rgba(15,23,42,0.08);
-      }
-      .status{
-        margin-top:12px;
-        font-size:13px;
-        color:var(--muted);
-      }
-      .note{
-        margin-top:6px;
-        font-size:12px;
-        color:var(--muted);
-      }
-      .frame-wrap{
-        margin-top:18px;
-        border:1px solid #e5e7eb;
-        border-radius:18px;
-        background:#ffffff;
-        overflow:hidden;
-        box-shadow:0 18px 48px rgba(15,23,42,0.12);
-        display:none;
-      }
-      .frame-wrap.show{ display:block; }
-      .frame-wrap iframe{
-        width:100%;
-        height:72vh;
-        border:0;
-        background:#ffffff;
-      }
-      @media (max-width: 900px){
-        .hero{ padding:24px 18px; }
-        .frame-wrap iframe{ height:70vh; }
-      }
-    </style>
-  </head>
-  <body>
-    <main class="landing">
-      <div class="hero">
-        <div class="brand">MR HT Lattice Viewer</div>
-        <div class="subtitle">Live preview for the MR HT web app (served via tunnel).</div>
+  .theme-toggle{width:40px;height:40px;display:grid;place-items:center;border-radius:999px;border:1px solid var(--ring);background:color-mix(in oklab, var(--bg-soft) 85%, #0000 15%);cursor:pointer;user-select:none}
+  .theme-toggle:hover{border-color:color-mix(in oklab, var(--ring) 40%, var(--brand));}
+  .theme-toggle .sun,.theme-toggle .moon{font-size:18px;line-height:1}
+  [data-theme="light"] .theme-toggle .sun{display:inline}
+  [data-theme="light"] .theme-toggle .moon{display:none}
+  .theme-toggle .sun{display:none}
+  .theme-toggle .moon{display:inline}
+  .top-right{position:absolute; top:18px; right:16px}
 
-        <div class="actions">
-          <a
-            id="openApp"
-            class="btn"
-            data-project="nano"
-            data-url="https://allen-partner-complimentary-laura.trycloudflare.com/"
-            href="#"
-            target="_blank"
-            rel="noopener"
-          >Open Live App</a>
-          <button id="togglePreview" class="btn ghost" type="button">Preview Here</button>
-        </div>
+  .grid{display:grid; gap:18px}
+  @media (min-width:768px){ .grid.cols-2{grid-template-columns:1fr 1fr} }
 
-        <div id="status" class="status">Tunnel not set yet. Run tunnel_keeper.py to update.</div>
-        <div class="note">If the preview is blank, open in a new tab or refresh after tunnel update.</div>
+  section{padding:44px 0; border-bottom:1px solid var(--ring)}
+  h2{font-size:clamp(22px,3.5vw,28px); margin:0 0 12px}
+  p{margin:6px 0}
 
-        <div id="frameWrap" class="frame-wrap">
-          <iframe
-            id="appFrame"
-            title="MR HT Lattice Viewer"
-            loading="lazy"
-            data-project="nano"
-            data-src="https://allen-partner-complimentary-laura.trycloudflare.com/"
-          ></iframe>
-        </div>
+  .card{
+    background: linear-gradient(var(--card), var(--card)) padding-box,
+               linear-gradient(180deg, color-mix(in oklab, var(--brand) 15%, transparent), transparent) border-box;
+    border:1px solid transparent; border-radius:20px; padding:18px;
+    box-shadow:0 10px 28px rgba(2,6,23,.35);
+    transition:transform .2s ease, box-shadow .2s ease, background .2s ease;
+  }
+  .card:hover{transform:translateY(-2px); box-shadow:0 18px 36px rgba(2,6,23,.45)}
+  .card h3{margin:0 0 8px; font-size:18px}
+  .card p{color:var(--muted)}
+
+  .btn{display:inline-block; padding:10px 14px; border-radius:12px; text-decoration:none; color:#06121f; background:linear-gradient(90deg, var(--brand), var(--brand-2)); font-weight:700}
+  .btn.ghost{background:transparent; color:var(--text); border:1px solid var(--ring)}
+  .pill{color:#06121f; background:#a7f3d0; padding:4px 8px; border-radius:999px; font-size:12px; font-weight:700}
+  footer{padding:36px 0; color:var(--muted)}
+  .muted{color:var(--muted)}
+  .mono{font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;}
+  a{color:var(--brand-2)}
+  /* 密码弹窗样式 */
+  .pw-modal{position:fixed; inset:0; background:rgba(2,6,23,.55); backdrop-filter:blur(2px); display:grid; place-items:center; z-index:9999}
+  .pw-modal[hidden]{display:none}
+  .pw-dialog{width:min(420px,92vw); background:var(--bg-soft); color:var(--text); border:1px solid var(--ring); border-radius:16px; padding:18px; box-shadow:0 24px 60px rgba(2,6,23,.5)}
+  .pw-dialog h3{margin:0 0 8px}
+  .pw-input{width:100%; padding:10px 12px; border-radius:12px; border:1px solid var(--ring); background:transparent; color:var(--text)}
+  .pw-actions{display:flex; justify-content:flex-end; gap:8px; margin-top:12px}
+  .pw-error{color:#ef4444; font-size:13px; min-height:1.2em; margin-top:6px}
+</style>
+</head>
+<body>
+  <header class="hero">
+    <div class="wrap">
+      <div class="brand">Yan Zhang</div>
+      <div class="tagline">Moiré / twisted vdW materials · Continuum/TAPW · Topological analysis · IOPCAS</div>
+      <nav>
+  <a href="#about">关于</a>
+  <a href="#demos">项目</a>
+  <a href="#contact">联系</a>
+  <a class="btn" href="https://github.com/zhangyan31415" target="_blank" rel="noopener">GitHub →</a>
+</nav>
+<button id="themeToggle" class="theme-toggle top-right" title="切换明暗" aria-label="切换明暗" aria-pressed="false"><span class="sun">🌞</span><span class="moon">🌛</span></button>
+    </div>
+  </header>
+
+  <!-- 密码弹窗（前端轻量门禁；仅作简易遮挡，不等同安全认证） -->
+  <div id="pw-modal" class="pw-modal" hidden>
+    <div class="pw-dialog">
+      <h3>输入访问密码</h3>
+      <p class="muted" style="margin-top:-4px">该项目受保护，请输入密码继续。</p>
+      <input id="pw-input" class="pw-input" type="password" placeholder="请输入密码" autocomplete="current-password" />
+      <div id="pw-error" class="pw-error" aria-live="polite"></div>
+      <div class="pw-actions">
+        <button id="pw-cancel" class="btn ghost" type="button">取消</button>
+        <button id="pw-submit" class="btn" type="button">继续</button>
       </div>
-    </main>
+    </div>
+  </div>
 
-    <script>
-      (function(){
-        const link = document.getElementById('openApp');
-        const toggle = document.getElementById('togglePreview');
-        const wrap = document.getElementById('frameWrap');
-        const frame = document.getElementById('appFrame');
-        const status = document.getElementById('status');
+  <main class="wrap">
+    <section id="about">
+      <h2>关于我</h2>
+      <p>专注于扭转/摩尔范德华材料与拓扑分析。此页仅作名片与入口。</p>    </section><section id="demos">
+      <h2>项目体验</h2>
+      <p class="muted" style="margin-top:-6px">提示：点击下方「打开项目」后会跳转到临时通道链接；该链接<strong>可能变更</strong>。若无法打开，请刷新本页或稍后再试。</p>
+      <div class="stack" style="display:flex; flex-direction:column; gap:16px; margin-top:16px">
+        <article class="card">
+          <h3 style="display:flex;align-items:center;gap:8px">Nano 服务器监控 <span class="pill">监控</span></h3>
+          <p class="muted">轻量监控面板：状态/资源/告警。</p>
+          <p style="margin:10px 0 14px;display:flex;gap:10px;flex-wrap:wrap">
+            <a class="btn gate-link" href="#" data-project="nano" data-url="https://signing-apartments-distance-tender.trycloudflare.com/">🔗 打开项目</a>
+            <button class="btn ghost gate-preview" data-project="nano" data-target="#frame-nano" data-src="https://signing-apartments-distance-tender.trycloudflare.com/" type="button">在页面内预览</button>
+          </p>
+          <p class="muted" style="margin:6px 0 0">打开项目后跳转的链接为临时通道，可能会更新。</p>
+          <div id="frame-nano" class="embed" style="display:none">
+            <iframe title="Nano Monitor" style="width:100%;height:60vh;border:1px solid #1f2937;border-radius:12px;background:#0b1220" loading="lazy" referrerpolicy="no-referrer"></iframe>
+          </div>
+        </article>
 
-        function pickUrl(){
-          if (link && link.dataset.url) return link.dataset.url;
-          if (frame && frame.dataset.src) return frame.dataset.src;
-          return '';
-        }
+        <article class="card">
+          <h3 style="display:flex;align-items:center;gap:8px">Moiré Band Viewer <span class="pill">实时</span></h3>
+          <p class="muted">Moiré能带与拓扑可视化。</p>
+          <p style="margin:10px 0 14px;display:flex;gap:10px;flex-wrap:wrap">
+            <a class="btn gate-link" href="#" data-project="band" data-url="https://answering-camel-mineral-pix.trycloudflare.com/">🔗 打开项目</a>
+            <button class="btn ghost gate-preview" data-project="band" data-target="#frame-band" data-src="https://answering-camel-mineral-pix.trycloudflare.com/" type="button">在页面内预览</button>
+          </p>
+          <p class="muted" style="margin:6px 0 0">打开项目后跳转的链接为临时通道，可能会更新。</p>
+          <div id="frame-band" class="embed" style="display:none">
+            <iframe title="Band Viewer" style="width:100%;height:60vh;border:1px solid #1f2937;border-radius:12px;background:#0b1220" loading="lazy" referrerpolicy="no-referrer"></iframe>
+          </div>
+        </article>
+      </div>
+    </section>
 
-        function normalize(url){
-          if (!url) return '';
-          return url.endsWith('/') ? url : url + '/';
-        }
+    <section id="contact">
+      <h2>联系</h2>
+      <p>GitHub：<a href="https://github.com/zhangyan31415" target="_blank" rel="noopener">@zhangyan31415</a></p>
+      <!-- <p>邮箱：<span class="muted">（可在此填写你的邮件地址或联系信息）</span></p> -->
+    </section>
+  </main>
 
-        function syncTargets(){
-          const raw = pickUrl();
-          if (!raw){
-            if (status) status.textContent = 'Tunnel not set yet. Run tunnel_keeper.py to update.';
-            return '';
-          }
-          const url = normalize(raw);
-          if (link) link.href = url;
-          if (status) status.textContent = 'Live tunnel: ' + url;
-          return url;
-        }
+  <footer>
+    <div class="wrap muted">© <span id="y"></span> Yan Zhang · Built with GitHub Pages</div>
+  </footer>
 
-        const initial = syncTargets();
-        if (initial && frame && !frame.src){
-          frame.src = initial;
-          if (wrap) wrap.classList.add('show');
-          if (toggle) toggle.textContent = 'Hide Preview';
-        }
+  <script>
+  // ---------- 主题切换（太阳 / 月亮） ----------
+(function(){
+  const root = document.documentElement;
+  const btn = document.getElementById('themeToggle');
+  const sysDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+  const saved = localStorage.getItem('theme');
+  const init = saved || (sysDark ? 'dark':'light');
+  root.setAttribute('data-theme', init);
+  if(btn){ btn.setAttribute('aria-pressed', init==='dark'); }
+  if(btn){ btn.addEventListener('click', ()=>{
+    const cur = root.getAttribute('data-theme')==='dark' ? 'light' : 'dark';
+    root.setAttribute('data-theme', cur);
+    localStorage.setItem('theme', cur);
+    btn.setAttribute('aria-pressed', cur==='dark');
+  }); }
+})();
 
-        if (toggle){
-          toggle.addEventListener('click', function(){
-            const url = syncTargets();
-            if (!url || !wrap || !frame) return;
-            if (!frame.src) frame.src = url;
-            const open = wrap.classList.toggle('show');
-            toggle.textContent = open ? 'Hide Preview' : 'Preview Here';
-          });
-        }
+  // ---------- 访问密码门控（前端哈希校验；仅用于演示） ----------
+(function(){
+  const modal = document.getElementById('pw-modal');
+  const input = document.getElementById('pw-input');
+  const err   = document.getElementById('pw-error');
+  const btnOk = document.getElementById('pw-submit');
+  const btnNo = document.getElementById('pw-cancel');
+  let ctx = null; // {type:'link'|'preview', url, target, btn, project}
 
-        if (link){
-          link.addEventListener('click', function(e){
-            const url = syncTargets();
-            if (!url) e.preventDefault();
-          });
-        }
-      })();
-    </script>
-  </body>
+  // 存储哈希（SHA-256 hex），避免明文出现在源码中（注意：仅防君子，不等同安全）
+  const PASS = {
+    band: 'e00a03f9476a7bf2c6f8e9fe741d549323a133e85afdfee1823e9ca3e3a64a6c',
+    nano: '0a5c81430ef4b9a449c4b94b8df61699fe2c725a7ef662862c6030c7e10083fc'  
+  };
+
+  async function sha256Hex(text){
+    const enc = new TextEncoder();
+    const buf = await crypto.subtle.digest('SHA-256', enc.encode(text));
+    const arr = Array.from(new Uint8Array(buf));
+    return arr.map(b=>b.toString(16).padStart(2,'0')).join('');
+  }
+
+  function openModal(newCtx){ ctx = newCtx; err.textContent=''; input.value=''; modal.hidden=false; setTimeout(()=>input.focus(), 10); }
+  function closeModal(){ modal.hidden=true; ctx=null; }
+  async function proceed(){
+    if(!ctx) return; const val = input.value.trim();
+    const h = await sha256Hex(val);
+    if(h !== PASS[ctx.project]){ err.textContent='密码错误'; input.select(); return; }
+    sessionStorage.setItem('ok-'+(ctx.project||''), '1');
+    if(ctx.type==='link'){
+      window.open(ctx.url, '_blank', 'noopener');
+    }else{
+      const wrap = document.querySelector(ctx.target);
+      const frame = wrap.querySelector('iframe');
+      if(wrap.style.display==='none' || !wrap.style.display){
+        if(!frame.src){ frame.src = ctx.url; }
+        wrap.style.display='block'; ctx.btn.textContent='收起预览';
+      }else{ wrap.style.display='none'; ctx.btn.textContent='在页面内预览'; }
+    }
+    closeModal();
+  }
+
+  btnOk.addEventListener('click', proceed);
+  btnNo.addEventListener('click', closeModal);
+  input.addEventListener('keydown', e=>{ if(e.key==='Enter') proceed(); if(e.key==='Escape') closeModal(); });
+
+  document.querySelectorAll('.gate-link').forEach(a=>{
+    a.addEventListener('click', e=>{
+      e.preventDefault();
+      const url = a.dataset.url || a.getAttribute('href');
+      const project = a.dataset.project || '';
+      if(sessionStorage.getItem('ok-'+project)==='1'){ window.open(url,'_blank','noopener'); return; }
+      openModal({type:'link', url, project});
+    });
+  });
+  document.querySelectorAll('.gate-preview').forEach(btn=>{
+    btn.addEventListener('click', e=>{
+      e.preventDefault();
+      const url = btn.dataset.src;
+      const target = btn.dataset.target;
+      const project = btn.dataset.project || '';
+      if(sessionStorage.getItem('ok-'+project)==='1'){
+        const wrap = document.querySelector(target);
+        const frame = wrap.querySelector('iframe');
+        if(wrap.style.display==='none' || !wrap.style.display){
+          if(!frame.src){ frame.src = url; }
+          wrap.style.display='block'; btn.textContent='收起预览';
+        }else{ wrap.style.display='none'; btn.textContent='在页面内预览'; }
+        return;
+      }
+      openModal({type:'preview', url, target, btn, project});
+    });
+  });
+})();
+
+// ---------- URL 参数覆盖 Quick Tunnel 地址 ----------
+const u = new URLSearchParams(location.search);
+const band = u.get('band');
+const nano = u.get('nano');
+if(band){
+  const a = document.querySelector('a.gate-link[data-project="band"]');
+  const b = document.querySelector('button.gate-preview[data-project="band"]');
+  if(a) a.dataset.url = band; if(b) b.dataset.src = band;
+}
+if(nano){
+  const a = document.querySelector('a.gate-link[data-project="nano"]');
+  const b = document.querySelector('button.gate-preview[data-project="nano"]');
+  if(a) a.dataset.url = nano; if(b) b.dataset.src = nano;
+}
+</script>
+</body>
 </html>
